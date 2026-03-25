@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // ─────────────────────────────────────────────
 // PUNTO DE ENTRADA
 // ─────────────────────────────────────────────
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
 }
 
 // ─────────────────────────────────────────────
@@ -84,6 +92,8 @@ class MyAppState extends ChangeNotifier {
 // ─────────────────────────────────────────────
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -173,6 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
 // ─────────────────────────────────────────────
 
 class MenuPrincipal extends StatelessWidget {
+  const MenuPrincipal({super.key});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -217,6 +229,8 @@ class MenuPrincipal extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class CrearParticipante extends StatefulWidget {
+  const CrearParticipante({super.key});
+
   @override
   State<CrearParticipante> createState() => _CrearParticipanteState();
 }
@@ -417,6 +431,8 @@ class _CrearParticipanteState extends State<CrearParticipante> {
 // ─────────────────────────────────────────────
 
 class ParticipantesPage extends StatelessWidget {
+  const ParticipantesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
@@ -471,6 +487,8 @@ class ParticipantesPage extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class EventosPage extends StatelessWidget {
+  const EventosPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
