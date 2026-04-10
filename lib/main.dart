@@ -4,13 +4,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'providers/app_state.dart';
 import 'screens/home/my_home_page.dart';
+import 'screens/autenticacion/login_page.dart';
 
+// ─────────────────────────────────────────────
+// PUNTO DE ENTRADA
+// ─────────────────────────────────────────────
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
+// ─────────────────────────────────────────────
+// RAÍZ DE LA APLICACIÓN
+// Configura el tema, el título y el proveedor de estado global.
+// ─────────────────────────────────────────────
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -24,7 +32,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
-        home: const MyHomePage(),
+        home: const LoginPage(),
       ),
     );
   }

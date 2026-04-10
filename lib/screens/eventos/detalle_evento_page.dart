@@ -97,7 +97,7 @@ class _DetalleEventoPageState extends State<DetalleEventoPage> {
           height: constraints.maxHeight,
           child: Column(
             children: [
-              // ── Tarjeta del evento ──────────────────────────────
+              // Tarjeta del evento
               Card(
                 margin: const EdgeInsets.all(16),
                 child: Padding(
@@ -228,7 +228,6 @@ class _DetalleEventoPageState extends State<DetalleEventoPage> {
                                   ),
                                 ),
                               ),
-                              // Sustituye el trailing: Column(...) de la tarjeta de ponencia
                               trailing: PopupMenuButton<String>(
                                 onSelected: (value) {
                                   if (value == 'editar') {

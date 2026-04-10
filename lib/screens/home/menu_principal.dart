@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// ─────────────────────────────────────────────
+// SECCIÓN 0: MENÚ PRINCIPAL
+// Pantalla de bienvenida. El contenido funcional se añadirá en iteraciones futuras.
+// ─────────────────────────────────────────────
 class MenuPrincipal extends StatelessWidget {
   const MenuPrincipal({super.key});
 
@@ -11,7 +15,11 @@ class MenuPrincipal extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.event_available, size: 80, color: theme.colorScheme.primary),
+          Icon(
+            Icons.event_available,
+            size: 80,
+            color: theme.colorScheme.primary,
+          ),
           const SizedBox(height: 24),
           Text(
             '¡Bienvenido a PonenciApp!',
@@ -28,6 +36,7 @@ class MenuPrincipal extends StatelessWidget {
           ),
         ],
       ),
+      // TODO: Añadir widgets de resumen (próximos eventos, estadísticas, etc.)
     );
   }
 }

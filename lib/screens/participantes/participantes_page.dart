@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import '../../widgets/custom_scaffold.dart';
 
+// ─────────────────────────────────────────────
+// SECCIÓN 2: LISTA DE PARTICIPANTES
+// Muestra en una lista todos los participantes registrados hasta el momento.
+// ─────────────────────────────────────────────
 class ParticipantesPage extends StatelessWidget {
   const ParticipantesPage({super.key});
 

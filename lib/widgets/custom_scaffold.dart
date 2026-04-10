@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// ─────────────────────────────────────────────
+// SCAFFOLD GLOBAL DE LA APLICACIÓN
+// Gestiona el scaffold que se ve en todas las ventanas
+// ─────────────────────────────────────────────
 class CustomScaffold extends StatelessWidget {
   final String title;
   final Widget body;

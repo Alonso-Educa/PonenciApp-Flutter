@@ -1,3 +1,7 @@
+// ─────────────────────────────────────────────
+// MODELO DE DATOS: PARTICIPANTE
+// Representa a un participante registrado en la plataforma.
+// ─────────────────────────────────────────────
 class Participante {
   final String idParticipante;
   final String nombre;
@@ -8,6 +12,7 @@ class Participante {
   final String rol;
   final String fechaRegistro;
   final String idEvento;
+  final String password;
 
   Participante({
     required this.idParticipante,
@@ -19,6 +24,7 @@ class Participante {
     this.rol = 'participante',
     this.fechaRegistro = '',
     this.idEvento = '',
+    required this.password,
   });
 
   Participante copyWith({
@@ -30,6 +36,7 @@ class Participante {
     String? rol,
     String? fechaRegistro,
     String? idEvento,
+    String? password,
   }) {
     return Participante(
       idParticipante: idParticipante,
@@ -41,6 +48,7 @@ class Participante {
       rol: rol ?? this.rol,
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
       idEvento: idEvento ?? this.idEvento,
+      password: password ?? this.password,
     );
   }
 }

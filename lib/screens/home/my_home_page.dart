@@ -4,6 +4,11 @@ import '../../screens/participantes/crear_participante.dart';
 import '../../screens/participantes/participantes_page.dart';
 import '../../screens/eventos/eventos_page.dart';
 
+// ─────────────────────────────────────────────
+// PÁGINA PRINCIPAL CON MENÚ LATERAL
+// Gestiona la navegación entre las distintas secciones
+// mediante un NavigationRail adaptable al ancho de pantalla.
+// ─────────────────────────────────────────────
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 

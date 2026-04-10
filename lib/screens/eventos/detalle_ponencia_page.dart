@@ -45,8 +45,13 @@ class DetallePonenciaPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: Text(ponencia.titulo,
-                          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                      child: Text(
+                        ponencia.titulo,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -60,13 +65,28 @@ class DetallePonenciaPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _fila(context, icono: Icons.person, etiqueta: 'Ponente', valor: ponencia.ponente),
+                        _fila(
+                          context,
+                          icono: Icons.person,
+                          etiqueta: 'Ponente',
+                          valor: ponencia.ponente,
+                        ),
                         const Divider(height: 24),
-                        _fila(context, icono: Icons.schedule, etiqueta: 'Horario',
-                            valor: '${ponencia.horaInicio} – ${ponencia.horaFin}'),
+                        _fila(
+                          context,
+                          icono: Icons.schedule,
+                          etiqueta: 'Horario',
+                          valor: '${ponencia.horaInicio} – ${ponencia.horaFin}',
+                        ),
                         const Divider(height: 24),
-                        _fila(context, icono: Icons.description, etiqueta: 'Descripción',
-                            valor: ponencia.descripcion.isEmpty ? 'Sin descripción' : ponencia.descripcion),
+                        _fila(
+                          context,
+                          icono: Icons.description,
+                          etiqueta: 'Descripción',
+                          valor: ponencia.descripcion.isEmpty
+                              ? 'Sin descripción'
+                              : ponencia.descripcion,
+                        ),
                       ],
                     ),
                   ),
@@ -75,8 +95,12 @@ class DetallePonenciaPage extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // ── QR de la ponencia ───────────────────────────
-                Text('Código QR',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'Código QR',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 Card(
                   child: Padding(
@@ -88,8 +112,10 @@ class DetallePonenciaPage extends StatelessWidget {
                           context: context,
                           useRootNavigator: true,
                           builder: (_) => DialogQR(
-                            titulo: 'QR — ${evento.nombre} — ${ponencia.titulo}',
-                            contenido: 'checkin:${evento.idEvento}:${ponencia.idPonencia}',
+                            titulo:
+                                'QR — ${evento.nombre} — ${ponencia.titulo}',
+                            contenido:
+                                'checkin:${evento.idEvento}:${ponencia.idPonencia}',
                           ),
                         ),
                         icon: const Icon(Icons.qr_code),
@@ -106,8 +132,12 @@ class DetallePonenciaPage extends StatelessWidget {
     );
   }
 
-  Widget _fila(BuildContext context,
-      {required IconData icono, required String etiqueta, required String valor}) {
+  Widget _fila(
+    BuildContext context, {
+    required IconData icono,
+    required String etiqueta,
+    required String valor,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -117,9 +147,14 @@ class DetallePonenciaPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(etiqueta,
-                  style: const TextStyle(
-                      fontSize: 12, color: Colors.black54, fontWeight: FontWeight.w500)),
+              Text(
+                etiqueta,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(height: 2),
               Text(valor, style: const TextStyle(fontSize: 16)),
             ],

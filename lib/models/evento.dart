@@ -1,3 +1,7 @@
+// ─────────────────────────────────────────────
+// MODELO DE DATOS: EVENTO
+// Representa a un evento registrado en la plataforma.
+// ─────────────────────────────────────────────
 class Evento {
   final String idEvento;
   final String nombre;

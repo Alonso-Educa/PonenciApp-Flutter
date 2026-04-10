@@ -1,3 +1,7 @@
+// ─────────────────────────────────────────────
+// MODELO DE DATOS: PONENCIA
+// Representa a una ponencia registrado en la plataforma.
+// ─────────────────────────────────────────────
 class Ponencia {
   final String idPonencia;
   final String titulo;

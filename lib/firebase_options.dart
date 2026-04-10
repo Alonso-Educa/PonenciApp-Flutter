@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'ponenciapp.firebasestorage.app',
     measurementId: 'G-WSJ1P9RLX6',
   );
-
 }

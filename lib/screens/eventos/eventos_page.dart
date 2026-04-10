@@ -113,10 +113,11 @@ class EventosPage extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('${evento.fecha}\n${evento.lugar}'),
                         Text(
-                          '${evento.fecha}\n${evento.lugar}',
+                          'Código: ${evento.codigoEvento}',
+                          style: TextStyle(color: Color(0xFF475D92)),
                         ),
-                        Text('Código: ${evento.codigoEvento}', style: TextStyle(color: Color(0xFF475D92)))
                       ],
                     ),
                     isThreeLine: true,
@@ -137,7 +138,7 @@ class EventosPage extends StatelessWidget {
                           value: 'editar',
                           child: Row(
                             children: [
-                              Icon(Icons.edit,  color: Color(0xFF475D92)),
+                              Icon(Icons.edit, color: Color(0xFF475D92)),
                               SizedBox(width: 8),
                               Text(
                                 'Editar',
