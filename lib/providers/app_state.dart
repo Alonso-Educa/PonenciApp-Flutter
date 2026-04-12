@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ponenciapp/models/organizador.dart';
 import '../models/participante.dart';
 import '../models/evento.dart';
@@ -10,16 +11,24 @@ import '../models/evento.dart';
 class MyAppState extends ChangeNotifier {
   List<Participante> participantes = [];
   List<Evento> eventos = [];
-  List<Organizador> organizadores = [];
-
-  // Organizador que ha iniciado sesión actualmente
   Organizador? organizadorActual;
 
+  // Tema
+  ThemeMode themeMode = ThemeMode.light;
+  bool get isDarkTheme => themeMode == ThemeMode.dark;
+
+  void toggleTheme() {
+    themeMode = isDarkTheme ? ThemeMode.light : ThemeMode.dark;
+    notifyListeners();
+  }
+
+  // Participantes
   void addParticipante(Participante p) {
     participantes.add(p);
     notifyListeners();
   }
 
+  // Eventos
   void addEvento(Evento e) {
     eventos.add(e);
     notifyListeners();
@@ -38,24 +47,27 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addOrganizador(Organizador o) {
-    organizadores.add(o);
+  // Organizadores
+  void actualizarOrganizadorActual(Organizador actualizado) {
+    organizadorActual = actualizado;
     notifyListeners();
   }
 
-  // Devuelve el organizador si email y password coinciden, null si no
-  Organizador? login(String email, String password) {
-    try {
-      return organizadores.firstWhere(
-        (o) => o.emailEduca == email && o.password == password,
-      );
-    } catch (_) {
-      return null;
-    }
+  // Gestión de cuenta
+  Future<void> cerrarSesion() async {
+    await FirebaseAuth.instance.signOut();
+    organizadorActual = null;
+    eventos.clear();
+    participantes.clear();
+    notifyListeners();
   }
 
-  void cerrarSesion() {
+  Future<void> eliminarCuenta() async {
+    // Auth y Firestore ya se gestionan en el diálogo antes de llamar aquí
+    // Solo limpiamos el estado local
     organizadorActual = null;
+    eventos.clear();
+    participantes.clear();
     notifyListeners();
   }
 }

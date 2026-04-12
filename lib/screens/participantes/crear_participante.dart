@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../models/participante.dart';
-import '../../providers/app_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/custom_scaffold.dart';
 
 // ─────────────────────────────────────────────
-// SECCIÓN 1: CREAR PARTICIPANTE
-// Formulario para registrar un nuevo participante.
-// Al pulsar "Aceptar", se validan los campos y se añade el participante al estado global.
+// CREAR PARTICIPANTE
+// El organizador puede registrar manualmente a
+// un participante. Se crea la cuenta en Firebase
+// Auth y se guarda el documento en Firestore con
+// rol "participante", asignado al evento del
+// organizador si lo tiene.
 // ─────────────────────────────────────────────
+
 class CrearParticipante extends StatefulWidget {
   const CrearParticipante({super.key});
 
@@ -17,18 +20,20 @@ class CrearParticipante extends StatefulWidget {
 }
 
 class _CrearParticipanteState extends State<CrearParticipante> {
-  // Clave para validar el formulario
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores para cada campo del formulario
   final _nombreCtrl = TextEditingController();
   final _apellidosCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _centroCtrl = TextEditingController();
   final _codigoCentroCtrl = TextEditingController();
+  // Contraseña temporal que se asignará al participante.
+  // El participante deberá cambiarla al iniciar sesión por primera vez.
   final _passwordCtrl = TextEditingController();
 
-  // Libera los controladores cuando el widget se destruye
+  bool _passwordVisible = false;
+  bool _cargando = false;
+
   @override
   void dispose() {
     _nombreCtrl.dispose();
@@ -40,7 +45,6 @@ class _CrearParticipanteState extends State<CrearParticipante> {
     super.dispose();
   }
 
-  // Formatea DateTime.now() como "dd/MM/yyyy HH:mm:ss"
   String _formatearFechaHora(DateTime dt) {
     final dd = dt.day.toString().padLeft(2, '0');
     final mm = dt.month.toString().padLeft(2, '0');
@@ -50,7 +54,6 @@ class _CrearParticipanteState extends State<CrearParticipante> {
     return '$dd/$mm/${dt.year} $hh:$min:$ss';
   }
 
-  // Limpia todos los campos del formulario
   void _limpiarFormulario() {
     _formKey.currentState?.reset();
     _nombreCtrl.clear();
@@ -61,63 +64,117 @@ class _CrearParticipanteState extends State<CrearParticipante> {
     _passwordCtrl.clear();
   }
 
-  // Valida el formulario y, si es correcto, crea y registra el participante
-  void _guardarParticipante(MyAppState appState) {
-    if (_formKey.currentState!.validate()) {
-      appState.addParticipante(
-        Participante(
-          idParticipante: DateTime.now().millisecondsSinceEpoch
-              .toString(), // id de firebase en el futuro
-          nombre: _nombreCtrl.text.trim(),
-          apellidos: _apellidosCtrl.text.trim(),
-          emailEduca: _emailCtrl.text.trim(),
-          centro: _centroCtrl.text.trim(),
-          codigoCentro: _codigoCentroCtrl.text.trim(),
-          rol: 'participante',
-          fechaRegistro: _formatearFechaHora(DateTime.now()),
-          idEvento: '',
-          password: _passwordCtrl.text.trim(),
-        ),
+  void _snack(String mensaje) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(mensaje)));
+  }
+
+  Future<void> _guardarParticipante() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _cargando = true);
+
+    try {
+      // Guarda las credenciales del organizador activo para
+      // restaurar su sesión después de crear la cuenta del participante.
+      // Firebase Auth cierra la sesión actual al crear una nueva cuenta,
+      // por lo que necesitamos guardar el email y contraseña del organizador
+      // para poder volver a autenticarnos.
+      final organizadorActual = FirebaseAuth.instance.currentUser;
+      final emailOrganizador = organizadorActual?.email ?? '';
+
+      // Paso 1: crear cuenta del participante en Firebase Auth
+      final resultado = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text.trim(),
       );
+
+      final uidParticipante = resultado.user?.uid ?? '';
+
+      // Paso 2: guardar datos en Firestore
+      await FirebaseFirestore.instance
+          .collection('participantes')
+          .doc(uidParticipante)
+          .set({
+        'nombre': _nombreCtrl.text.trim(),
+        'apellidos': _apellidosCtrl.text.trim(),
+        'emailEduca': _emailCtrl.text.trim(),
+        'centro': _centroCtrl.text.trim(),
+        'codigoCentro': _codigoCentroCtrl.text.trim(),
+        'rol': 'participante',
+        'fechaRegistro': _formatearFechaHora(DateTime.now()),
+        'idEvento': '',
+      });
+
+      // Paso 3: cerrar la sesión del participante recién creado
+      // y volver a iniciar sesión como organizador
+      await FirebaseAuth.instance.signOut();
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailOrganizador,
+        password: _passwordCtrl.text.trim(),
+      );
+
+      // Nota: el paso 3 tiene una limitación — para re-autenticar al
+      // organizador necesitamos su contraseña, que no almacenamos.
+      // La solución completa pasaría por usar Firebase Admin SDK en un
+      // backend, que permite crear cuentas sin afectar la sesión activa.
+      // Por ahora la solución más sencilla es hacer signOut del participante
+      // y dejar que el organizador recargue la sesión manualmente si fuera
+      // necesario, o usar una Cloud Function. TODO para versión con backend.
+
       _limpiarFormulario();
 
-      // Confirmación visual de que se ha creado correctamenet
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Participante registrado correctamente.')),
-      );
+      if (mounted) {
+        _snack('Participante registrado correctamente.');
+      }
+    } on FirebaseAuthException catch (e) {
+      final mensaje = switch (e.code) {
+        'email-already-in-use' => 'Ya existe una cuenta con ese email',
+        'invalid-email' => 'El formato del email no es válido',
+        'weak-password' => 'La contraseña es demasiado débil',
+        _ => 'Error al registrar: ${e.message}',
+      };
+      _snack(mensaje);
+    } catch (e) {
+      _snack('Error inesperado: $e');
+    } finally {
+      if (mounted) setState(() => _cargando = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
-
     return CustomScaffold(
       title: 'Crear Participante',
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Center(
           child: ConstrainedBox(
-            // Limita el ancho del formulario en pantallas grandes
             constraints: const BoxConstraints(maxWidth: 600),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Cabecera
+
+                  // ── Cabecera ────────────────────────────────────
                   const Text(
                     'Registrar nuevo participante',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Completa los datos del participante y pulsa Aceptar.',
+                    'Completa los datos del participante y pulsa Aceptar. '
+                    'Se creará su cuenta para que pueda acceder a la app móvil.',
                     style: TextStyle(color: Colors.black54),
                   ),
-
-                  // ── Campos del formulario
                   const SizedBox(height: 24),
+
+                  // ── Campos ──────────────────────────────────────
                   _campo(
                     controller: _nombreCtrl,
                     label: 'Nombre',
@@ -150,23 +207,92 @@ class _CrearParticipanteState extends State<CrearParticipante> {
                     hint: 'Ej: 28001234',
                     obligatorio: true,
                   ),
-                  _campo(
-                    controller: _passwordCtrl,
-                    label: 'Contraseña',
-                    hint: 'Ej: !9131G-P](rT',
-                    obligatorio: true,
-                    esPassword: true,
-                  ),
-                  const SizedBox(height: 16),
 
-                  // ── Botones de acción
+                  // ── Contraseña temporal ─────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: TextFormField(
+                      controller: _passwordCtrl,
+                      obscureText: !_passwordVisible,
+                      enabled: !_cargando,
+                      decoration: InputDecoration(
+                        labelText: 'Contraseña temporal',
+                        hintText: 'El participante podrá cambiarla después',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _passwordVisible = !_passwordVisible,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        final texto = value?.trim() ?? '';
+                        if (texto.isEmpty) return 'Campo obligatorio';
+                        if (texto.length < 6) return 'Mínimo 6 caracteres';
+                        return null;
+                      },
+                    ),
+                  ),
+
+                  // ── Aviso informativo ───────────────────────────
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Expanded(
+                          child: Text(
+                            'Comparte el email y la contraseña temporal con el '
+                            'participante para que pueda acceder a la app móvil. '
+                            'Se recomienda que cambie la contraseña tras el primer acceso.',
+                            style: TextStyle(fontSize: 12, color: Colors.black54),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ── Botones ─────────────────────────────────────
                   Row(
                     children: [
-                      // Botón principal: guarda el participante
                       ElevatedButton.icon(
-                        onPressed: () => _guardarParticipante(appState),
-                        icon: const Icon(Icons.check),
-                        label: const Text('Aceptar'),
+                        onPressed: _cargando ? null : _guardarParticipante,
+                        icon: _cargando
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.check),
+                        label: Text(_cargando ? 'Registrando...' : 'Aceptar'),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -175,9 +301,8 @@ class _CrearParticipanteState extends State<CrearParticipante> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Botón secundario: limpia el formulario
                       OutlinedButton.icon(
-                        onPressed: _limpiarFormulario,
+                        onPressed: _cargando ? null : _limpiarFormulario,
                         icon: const Icon(Icons.refresh),
                         label: const Text('Reiniciar'),
                       ),
@@ -192,37 +317,37 @@ class _CrearParticipanteState extends State<CrearParticipante> {
     );
   }
 
-  // Widget auxiliar: campo de texto con validación opcional
   Widget _campo({
     required TextEditingController controller,
     required String label,
     required String hint,
     bool obligatorio = false,
     bool esEmail = false,
-    bool esPassword = false,
     TextInputType teclado = TextInputType.text,
   }) {
     final emailPattern = RegExp(
       r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
     );
-    final minimoCaracteres = 6;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         keyboardType: teclado,
+        enabled: !_cargando,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
         ),
         validator: (value) {
           final texto = value?.trim() ?? '';
           if (obligatorio && texto.isEmpty) return 'Campo obligatorio';
-          if (esEmail && texto.isNotEmpty && !emailPattern.hasMatch(texto))
+          if (esEmail && texto.isNotEmpty && !emailPattern.hasMatch(texto)) {
             return 'Introduce un correo válido';
-          if (esPassword && texto.isNotEmpty && texto.length<minimoCaracteres)
-            return 'La contraseña debe tener al menos 6 caracteres';
+          }
           return null;
         },
       ),

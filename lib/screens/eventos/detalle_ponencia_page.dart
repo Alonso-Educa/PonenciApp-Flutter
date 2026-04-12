@@ -4,6 +4,12 @@ import '../../models/ponencia.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../utils/dialog_qr.dart';
 
+// ─────────────────────────────────────────────
+// DETALLE DE PONENCIA
+// Muestra la información completa de una ponencia.
+// Recibe los datos ya cargados desde DetalleEventoPage.
+// ─────────────────────────────────────────────
+
 class DetallePonenciaPage extends StatelessWidget {
   final Ponencia ponencia;
   final Evento evento;
@@ -28,7 +34,8 @@ class DetallePonenciaPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Cabecera: orden + título ────────────────────
+
+                // ── Cabecera: orden + título ──────────────────
                 Row(
                   children: [
                     CircleAvatar(
@@ -58,7 +65,7 @@ class DetallePonenciaPage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // ── Datos principales ───────────────────────────
+                // ── Datos principales ─────────────────────────
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -76,7 +83,8 @@ class DetallePonenciaPage extends StatelessWidget {
                           context,
                           icono: Icons.schedule,
                           etiqueta: 'Horario',
-                          valor: '${ponencia.horaInicio} – ${ponencia.horaFin}',
+                          valor:
+                              '${ponencia.horaInicio} – ${ponencia.horaFin}',
                         ),
                         const Divider(height: 24),
                         _fila(
@@ -87,6 +95,13 @@ class DetallePonenciaPage extends StatelessWidget {
                               ? 'Sin descripción'
                               : ponencia.descripcion,
                         ),
+                        const Divider(height: 24),
+                        _fila(
+                          context,
+                          icono: Icons.event,
+                          etiqueta: 'Evento',
+                          valor: evento.nombre,
+                        ),
                       ],
                     ),
                   ),
@@ -94,7 +109,7 @@ class DetallePonenciaPage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // ── QR de la ponencia ───────────────────────────
+                // ── QR de la ponencia ─────────────────────────
                 Text(
                   'Código QR',
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -119,7 +134,9 @@ class DetallePonenciaPage extends StatelessWidget {
                           ),
                         ),
                         icon: const Icon(Icons.qr_code),
-                        label: const Text('Ver QR de Check-in de la ponencia'),
+                        label: const Text(
+                          'Ver QR de Check-in de la ponencia',
+                        ),
                       ),
                     ),
                   ),
@@ -141,7 +158,8 @@ class DetallePonenciaPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icono, size: 22, color: Theme.of(context).colorScheme.primary),
+        Icon(icono,
+            size: 22, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Column(

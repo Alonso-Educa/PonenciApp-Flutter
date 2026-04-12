@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../screens/home/menu_principal.dart';
 import '../../screens/participantes/crear_participante.dart';
-import '../../screens/participantes/participantes_page.dart';
 import '../../screens/eventos/eventos_page.dart';
+import '../ajustes_page.dart';
+import '../estadisticas_page.dart';
 
 // ─────────────────────────────────────────────
 // PÁGINA PRINCIPAL CON MENÚ LATERAL
@@ -23,9 +24,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final pages = [
       const MenuPrincipal(),
+      const EstadisticasPage(),
       const CrearParticipante(),
-      const ParticipantesPage(),
       const EventosPage(),
+      const AjustesPage(),
     ];
 
     return LayoutBuilder(
@@ -43,16 +45,20 @@ class _MyHomePageState extends State<MyHomePage> {
                       label: Text('Menú Principal'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.bar_chart),
+                      label: Text('Estadísticas'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.person_add),
                       label: Text('Crear Participante'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.people),
-                      label: Text('Participantes'),
-                    ),
-                    NavigationRailDestination(
                       icon: Icon(Icons.event),
                       label: Text('Eventos y Ponencias'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings),
+                      label: Text('Ajustes'),
                     ),
                   ],
                   selectedIndex: selectedIndex,

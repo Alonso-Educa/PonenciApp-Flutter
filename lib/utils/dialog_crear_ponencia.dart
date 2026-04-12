@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ponencia.dart';
+
+// ─────────────────────────────────────────────
+// DIÁLOGO CREAR / EDITAR PONENCIA
+// Guarda la ponencia en Firestore al crear o editar.
+// ─────────────────────────────────────────────
 
 class DialogCrearPonencia extends StatefulWidget {
   final Ponencia? ponenciaEditando;
@@ -25,6 +31,7 @@ class _DialogCrearPonenciaState extends State<DialogCrearPonencia> {
   late TextEditingController descripcionCtrl;
   late TextEditingController inicioCtrl;
   late TextEditingController finCtrl;
+  bool _cargando = false;
 
   @override
   void initState() {
@@ -47,12 +54,18 @@ class _DialogCrearPonenciaState extends State<DialogCrearPonencia> {
     super.dispose();
   }
 
+  void _snack(String mensaje) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(mensaje)));
+  }
+
   Future<void> _seleccionarHora(TextEditingController ctrl) async {
     final hora = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
       builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        data: MediaQuery.of(context)
+            .copyWith(alwaysUse24HourFormat: true),
         child: child!,
       ),
     );
@@ -63,128 +76,149 @@ class _DialogCrearPonenciaState extends State<DialogCrearPonencia> {
     }
   }
 
-  void _guardar() {
+  Future<void> _guardar() async {
     if (tituloCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Introduce el título')));
+      _snack('Introduce el título');
       return;
     }
     if (ponenteCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Introduce el ponente')));
+      _snack('Introduce el ponente');
       return;
     }
     if (inicioCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Introduce la hora de inicio')),
-      );
+      _snack('Introduce la hora de inicio');
       return;
     }
     if (finCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Introduce la hora de fin')));
+      _snack('Introduce la hora de fin');
       return;
     }
     if (finCtrl.text.trim().compareTo(inicioCtrl.text.trim()) <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La hora de fin debe ser posterior a la de inicio'),
-        ),
-      );
+      _snack('La hora de fin debe ser posterior a la de inicio');
       return;
     }
 
-    final nueva = Ponencia(
-      idPonencia:
-          widget.ponenciaEditando?.idPonencia ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
-      titulo: tituloCtrl.text.trim(),
-      ponente: ponenteCtrl.text.trim(),
-      descripcion: descripcionCtrl.text.trim(),
-      horaInicio: inicioCtrl.text.trim(),
-      horaFin: finCtrl.text.trim(),
-      idEvento: widget.idEvento,
-      orden: widget.ponenciaEditando?.orden ?? widget.ordenSiguiente,
-    );
+    setState(() => _cargando = true);
 
-    widget.onGuardar(nueva);
-    Navigator.pop(context);
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final orden = widget.ponenciaEditando?.orden ?? widget.ordenSiguiente;
+
+      final data = {
+        'titulo': tituloCtrl.text.trim(),
+        'ponente': ponenteCtrl.text.trim(),
+        'descripcion': descripcionCtrl.text.trim(),
+        'horaInicio': inicioCtrl.text.trim(),
+        'horaFin': finCtrl.text.trim(),
+        'idEvento': widget.idEvento,
+        'orden': orden,
+        'qrCode': widget.ponenciaEditando?.qrCode ?? '',
+      };
+
+      if (widget.ponenciaEditando == null) {
+        // ── Crear nueva ponencia ────────────────────────────
+        final ref = firestore.collection('ponencias').doc();
+        await ref.set(data);
+
+        widget.onGuardar(Ponencia(
+          idPonencia: ref.id,
+          titulo: tituloCtrl.text.trim(),
+          ponente: ponenteCtrl.text.trim(),
+          descripcion: descripcionCtrl.text.trim(),
+          horaInicio: inicioCtrl.text.trim(),
+          horaFin: finCtrl.text.trim(),
+          idEvento: widget.idEvento,
+          orden: orden,
+        ));
+      } else {
+        // ── Editar ponencia existente ────────────────────────
+        await firestore
+            .collection('ponencias')
+            .doc(widget.ponenciaEditando!.idPonencia)
+            .update(data);
+
+        widget.onGuardar(widget.ponenciaEditando!.copyWith(
+          titulo: tituloCtrl.text.trim(),
+          ponente: ponenteCtrl.text.trim(),
+          descripcion: descripcionCtrl.text.trim(),
+          horaInicio: inicioCtrl.text.trim(),
+          horaFin: finCtrl.text.trim(),
+        ));
+      }
+
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      setState(() => _cargando = false);
+      _snack('Error guardando ponencia: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 300, maxWidth: 400),
-        child: Text(
-          widget.ponenciaEditando == null
-              ? 'Nueva ponencia'
-              : 'Editar ponencia',
-          softWrap: true, // asegura que haga wrap
-        ),
+      title: Text(
+        widget.ponenciaEditando == null
+            ? 'Nueva ponencia'
+            : 'Editar ponencia',
       ),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: 300,
-          maxWidth: 400,
-        ), // ancho máximo
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: tituloCtrl,
-                decoration: const InputDecoration(labelText: 'Título'),
-                minLines: 1,
-                maxLines: 2,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: tituloCtrl,
+              enabled: !_cargando,
+              decoration: const InputDecoration(labelText: 'Título'),
+            ),
+            TextField(
+              controller: ponenteCtrl,
+              enabled: !_cargando,
+              decoration: const InputDecoration(labelText: 'Ponente'),
+            ),
+            TextField(
+              controller: descripcionCtrl,
+              enabled: !_cargando,
+              decoration:
+                  const InputDecoration(labelText: 'Descripción'),
+            ),
+            TextField(
+              controller: inicioCtrl,
+              readOnly: true,
+              enabled: !_cargando,
+              decoration: const InputDecoration(
+                labelText: 'Hora de inicio',
+                suffixIcon: Icon(Icons.access_time),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: ponenteCtrl,
-                decoration: const InputDecoration(labelText: 'Ponente'),
-                minLines: 1,
-                maxLines: 2,
+              onTap: () => _seleccionarHora(inicioCtrl),
+            ),
+            TextField(
+              controller: finCtrl,
+              readOnly: true,
+              enabled: !_cargando,
+              decoration: const InputDecoration(
+                labelText: 'Hora de fin',
+                suffixIcon: Icon(Icons.access_time),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: descripcionCtrl,
-                decoration: const InputDecoration(labelText: 'Descripción'),
-                minLines: 2,
-                maxLines: 5,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: inicioCtrl,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Hora de inicio',
-                  suffixIcon: Icon(Icons.access_time),
-                ),
-                onTap: () => _seleccionarHora(inicioCtrl),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: finCtrl,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Hora de fin',
-                  suffixIcon: Icon(Icons.access_time),
-                ),
-                onTap: () => _seleccionarHora(finCtrl),
-              ),
-            ],
-          ),
+              onTap: () => _seleccionarHora(finCtrl),
+            ),
+          ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: _cargando ? null : () => Navigator.pop(context),
           child: const Text('Cancelar'),
         ),
-        ElevatedButton(onPressed: _guardar, child: const Text('Guardar')),
+        ElevatedButton(
+          onPressed: _cargando ? null : _guardar,
+          child: _cargando
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Guardar'),
+        ),
       ],
     );
   }

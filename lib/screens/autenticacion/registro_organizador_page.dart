@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../models/organizador.dart';
-import '../../providers/app_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/custom_scaffold.dart';
 
 // ─────────────────────────────────────────────
@@ -9,7 +8,6 @@ import '../../widgets/custom_scaffold.dart';
 // El organizador introduce sus datos para crear
 // su cuenta. Tras el registro vuelve al login.
 // ─────────────────────────────────────────────
-
 class RegistroOrganizadorPage extends StatefulWidget {
   const RegistroOrganizadorPage({super.key});
 
@@ -28,8 +26,8 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
   final _codigoCentroCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
-  // Controla la visibilidad de la contraseña
   bool _passwordVisible = false;
+  bool _cargando = false;
 
   @override
   void dispose() {
@@ -61,51 +59,74 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
     _passwordCtrl.clear();
   }
 
-  void _guardarOrganizador(MyAppState appState) {
+  void _mostrarError(String mensaje) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(mensaje)));
+  }
+
+  Future<void> _registrar() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Comprueba que el email no esté ya registrado
-    final emailYaExiste = appState.organizadores
-        .any((o) => o.emailEduca == _emailCtrl.text.trim());
+    setState(() => _cargando = true);
 
-    if (emailYaExiste) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ya existe una cuenta con ese email')),
-      );
-      return;
-    }
-
-    appState.addOrganizador(
-      Organizador(
-        idParticipante: DateTime.now().millisecondsSinceEpoch.toString(),
-        nombre: _nombreCtrl.text.trim(),
-        apellidos: _apellidosCtrl.text.trim(),
-        emailEduca: _emailCtrl.text.trim(),
-        centro: _centroCtrl.text.trim(),
-        codigoCentro: _codigoCentroCtrl.text.trim(),
-        rol: 'organizador', // ← corregido
-        fechaRegistro: _formatearFechaHora(DateTime.now()),
-        idEvento: '',
+    try {
+      // ── Paso 1: crear cuenta en Firebase Auth ────────────────
+      final resultado = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text.trim(),
-      ),
-    );
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Cuenta registrada correctamente. Por favor inicia sesión.',
-        ),
-      ),
-    );
+      final uid = resultado.user?.uid ?? '';
 
-    // Vuelve al login tras registrarse
-    Navigator.pop(context);
+      // ── Paso 2: guardar datos en Firestore ───────────────────
+      await FirebaseFirestore.instance
+          .collection('participantes')
+          .doc(uid)
+          .set({
+        'nombre': _nombreCtrl.text.trim(),
+        'apellidos': _apellidosCtrl.text.trim(),
+        'emailEduca': _emailCtrl.text.trim(),
+        'centro': _centroCtrl.text.trim(),
+        'codigoCentro': _codigoCentroCtrl.text.trim(),
+        'rol': 'organizador',
+        'fechaRegistro': _formatearFechaHora(DateTime.now()),
+        'idEvento': '',
+      });
+
+      // ── Paso 3: cerrar sesión para que inicie sesión desde el login ──
+      // No dejamos al usuario logueado automáticamente para que
+      // pase por el flujo de login, donde se verifica el rol
+      await FirebaseAuth.instance.signOut();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Cuenta creada correctamente. Por favor inicia sesión.',
+            ),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() => _cargando = false);
+
+      final mensaje = switch (e.code) {
+        'email-already-in-use' => 'Ya existe una cuenta con ese email',
+        'invalid-email' => 'El formato del email no es válido',
+        'weak-password' => 'La contraseña es demasiado débil',
+        _ => 'Error al registrar: ${e.message}',
+      };
+      _mostrarError(mensaje);
+    } catch (e) {
+      setState(() => _cargando = false);
+      _mostrarError('Error inesperado: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
-
     return CustomScaffold(
       title: 'Registro de usuario',
       body: SingleChildScrollView(
@@ -118,6 +139,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   // ── Cabecera ──────────────────────────────────
                   const Text(
                     'Crear cuenta de organizador',
@@ -167,12 +189,13 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                     obligatorio: true,
                   ),
 
-                  // ── Campo contraseña con toggle ───────────────
+                  // ── Contraseña con toggle ─────────────────────
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: TextFormField(
                       controller: _passwordCtrl,
                       obscureText: !_passwordVisible,
+                      enabled: !_cargando,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         hintText: 'Mínimo 10 caracteres y un símbolo',
@@ -193,9 +216,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                       validator: (value) {
                         final texto = value?.trim() ?? '';
                         if (texto.isEmpty) return 'Campo obligatorio';
-                        if (texto.length < 10) {
-                          return 'Mínimo 10 caracteres';
-                        }
+                        if (texto.length < 10) return 'Mínimo 10 caracteres';
                         if (!texto.contains(RegExp(r'[^A-Za-z0-9]'))) {
                           return 'Debe incluir al menos un carácter especial';
                         }
@@ -210,9 +231,17 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                   Row(
                     children: [
                       ElevatedButton.icon(
-                        onPressed: () => _guardarOrganizador(appState),
-                        icon: const Icon(Icons.check),
-                        label: const Text('Aceptar'),
+                        onPressed: _cargando ? null : _registrar,
+                        icon: _cargando
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.check),
+                        label: Text(_cargando ? 'Registrando...' : 'Aceptar'),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -222,7 +251,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                       ),
                       const SizedBox(width: 12),
                       OutlinedButton.icon(
-                        onPressed: _limpiarFormulario,
+                        onPressed: _cargando ? null : _limpiarFormulario,
                         icon: const Icon(Icons.refresh),
                         label: const Text('Reiniciar'),
                       ),
@@ -254,6 +283,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
       child: TextFormField(
         controller: controller,
         keyboardType: teclado,
+        enabled: !_cargando,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
