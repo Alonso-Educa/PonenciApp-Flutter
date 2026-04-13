@@ -65,8 +65,9 @@ class _CrearParticipanteState extends State<CrearParticipante> {
   }
 
   void _snack(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _guardarParticipante() async {
@@ -86,9 +87,9 @@ class _CrearParticipanteState extends State<CrearParticipante> {
       // Paso 1: crear cuenta del participante en Firebase Auth
       final resultado = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text.trim(),
-      );
+            email: _emailCtrl.text.trim(),
+            password: _passwordCtrl.text.trim(),
+          );
 
       final uidParticipante = resultado.user?.uid ?? '';
 
@@ -97,15 +98,15 @@ class _CrearParticipanteState extends State<CrearParticipante> {
           .collection('participantes')
           .doc(uidParticipante)
           .set({
-        'nombre': _nombreCtrl.text.trim(),
-        'apellidos': _apellidosCtrl.text.trim(),
-        'emailEduca': _emailCtrl.text.trim(),
-        'centro': _centroCtrl.text.trim(),
-        'codigoCentro': _codigoCentroCtrl.text.trim(),
-        'rol': 'participante',
-        'fechaRegistro': _formatearFechaHora(DateTime.now()),
-        'idEvento': '',
-      });
+            'nombre': _nombreCtrl.text.trim(),
+            'apellidos': _apellidosCtrl.text.trim(),
+            'emailEduca': _emailCtrl.text.trim(),
+            'centro': _centroCtrl.text.trim(),
+            'codigoCentro': _codigoCentroCtrl.text.trim(),
+            'rol': 'participante',
+            'fechaRegistro': _formatearFechaHora(DateTime.now()),
+            'idEvento': '',
+          });
 
       // Paso 3: cerrar la sesión del participante recién creado
       // y volver a iniciar sesión como organizador
@@ -157,14 +158,10 @@ class _CrearParticipanteState extends State<CrearParticipante> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   // ── Cabecera ────────────────────────────────────
                   const Text(
                     'Registrar nuevo participante',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
                   const Text(
@@ -245,10 +242,9 @@ class _CrearParticipanteState extends State<CrearParticipante> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withOpacity(0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.primary,
@@ -269,7 +265,10 @@ class _CrearParticipanteState extends State<CrearParticipante> {
                             'Comparte el email y la contraseña temporal con el '
                             'participante para que pueda acceder a la app móvil. '
                             'Se recomienda que cambie la contraseña tras el primer acceso.',
-                            style: TextStyle(fontSize: 12, color: Colors.black54),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
                           ),
                         ),
                       ],
@@ -338,9 +337,7 @@ class _CrearParticipanteState extends State<CrearParticipante> {
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
         ),
         validator: (value) {
           final texto = value?.trim() ?? '';
@@ -350,6 +347,8 @@ class _CrearParticipanteState extends State<CrearParticipante> {
           }
           return null;
         },
+        minLines: 1,
+        maxLines: 3,
       ),
     );
   }

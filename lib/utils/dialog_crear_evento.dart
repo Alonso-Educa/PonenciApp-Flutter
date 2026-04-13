@@ -49,8 +49,9 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
   }
 
   void _snack(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _guardar() async {
@@ -88,32 +89,36 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
           'contrasena': '',
         });
 
-        widget.onGuardar(Evento(
-          idEvento: ref.id,
-          nombre: widget.nombreCtrl.text.trim(),
-          fecha: widget.fechaCtrl.text.trim(),
-          lugar: widget.lugarCtrl.text.trim(),
-          descripcion: widget.descripcionCtrl.text.trim(),
-          codigoEvento: codigo,
-        ));
+        widget.onGuardar(
+          Evento(
+            idEvento: ref.id,
+            nombre: widget.nombreCtrl.text.trim(),
+            fecha: widget.fechaCtrl.text.trim(),
+            lugar: widget.lugarCtrl.text.trim(),
+            descripcion: widget.descripcionCtrl.text.trim(),
+            codigoEvento: codigo,
+          ),
+        );
       } else {
         // ── Editar evento existente ───────────────────────────
         await firestore
             .collection('eventos')
             .doc(widget.eventoEditando!.idEvento)
             .update({
-          'nombre': widget.nombreCtrl.text.trim(),
-          'fecha': widget.fechaCtrl.text.trim(),
-          'lugar': widget.lugarCtrl.text.trim(),
-          'descripcion': widget.descripcionCtrl.text.trim(),
-        });
+              'nombre': widget.nombreCtrl.text.trim(),
+              'fecha': widget.fechaCtrl.text.trim(),
+              'lugar': widget.lugarCtrl.text.trim(),
+              'descripcion': widget.descripcionCtrl.text.trim(),
+            });
 
-        widget.onGuardar(widget.eventoEditando!.copyWith(
-          nombre: widget.nombreCtrl.text.trim(),
-          fecha: widget.fechaCtrl.text.trim(),
-          lugar: widget.lugarCtrl.text.trim(),
-          descripcion: widget.descripcionCtrl.text.trim(),
-        ));
+        widget.onGuardar(
+          widget.eventoEditando!.copyWith(
+            nombre: widget.nombreCtrl.text.trim(),
+            fecha: widget.fechaCtrl.text.trim(),
+            lugar: widget.lugarCtrl.text.trim(),
+            descripcion: widget.descripcionCtrl.text.trim(),
+          ),
+        );
       }
 
       if (mounted) Navigator.pop(context);
@@ -124,10 +129,12 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
   }
 
   String _generarCodigo() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     final rand = Random();
     final code = List.generate(
-      4, (_) => chars[rand.nextInt(chars.length)],
+      4,
+      (_) => chars[rand.nextInt(chars.length)],
     ).join();
     return 'FORM-$code';
   }
@@ -138,45 +145,54 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
       title: Text(
         widget.eventoEditando == null ? 'Crear evento' : 'Editar evento',
       ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: widget.nombreCtrl,
-              enabled: !_cargando,
-              decoration:
-                  const InputDecoration(labelText: 'Nombre del evento'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: widget.fechaCtrl,
-              readOnly: true,
-              enabled: !_cargando,
-              decoration: InputDecoration(
-                labelText: 'Fecha del evento',
-                hintText: 'dd/MM/yyyy',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.calendar_month),
-                  onPressed: _seleccionarFecha,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: widget.nombreCtrl,
+                enabled: !_cargando,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre del evento',
                 ),
+                minLines: 1,
+                maxLines: 2,
               ),
-              onTap: _seleccionarFecha,
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: widget.lugarCtrl,
-              enabled: !_cargando,
-              decoration: const InputDecoration(labelText: 'Lugar'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: widget.descripcionCtrl,
-              enabled: !_cargando,
-              decoration: const InputDecoration(labelText: 'Descripción'),
-              maxLines: 3,
-            ),
-          ],
+              const SizedBox(height: 8),
+              TextField(
+                controller: widget.fechaCtrl,
+                readOnly: true,
+                enabled: !_cargando,
+                decoration: InputDecoration(
+                  labelText: 'Fecha del evento',
+                  hintText: 'dd/MM/yyyy',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_month),
+                    onPressed: _seleccionarFecha,
+                  ),
+                ),
+                onTap: _seleccionarFecha,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: widget.lugarCtrl,
+                enabled: !_cargando,
+                decoration: const InputDecoration(labelText: 'Lugar'),
+                minLines: 1,
+                maxLines: 2,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: widget.descripcionCtrl,
+                enabled: !_cargando,
+                decoration: const InputDecoration(labelText: 'Descripción'),
+                minLines: 2,
+                maxLines: 5,
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -192,9 +208,7 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : Text(
-                  widget.eventoEditando == null ? 'Crear' : 'Guardar',
-                ),
+              : Text(widget.eventoEditando == null ? 'Crear' : 'Guardar'),
         ),
       ],
     );

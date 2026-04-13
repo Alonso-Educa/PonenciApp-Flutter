@@ -9,8 +9,7 @@ import 'autenticacion/login_page.dart';
 
 // ─────────────────────────────────────────────
 // PANTALLA DE AJUSTES
-// Muestra los datos del organizador activo,
-// permite editarlos, cambiar el tema, cerrar sesión y eliminar la cuenta.
+// Muestra los datos del organizador activo, permite editarlos, cambiar el tema, cerrar sesión y eliminar la cuenta.
 // ─────────────────────────────────────────────
 class AjustesPage extends StatelessWidget {
   const AjustesPage({super.key});
@@ -30,12 +29,16 @@ class AjustesPage extends StatelessWidget {
       builder: (_) => AlertDialog(
         icon: const Icon(Icons.logout),
         title: const Text('Cerrar sesión'),
-        content: const Text('¿Deseas cerrar sesión y volver al menú de inicio?'),
+        content: const Text(
+          '¿Deseas cerrar sesión y volver al menú de inicio?',
+        ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
           ),
+          SizedBox(width: 4),
           ElevatedButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -63,7 +66,6 @@ class AjustesPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-
           // ─────────────────────────────────────────────────────
           // SECCIÓN: DATOS DEL USUARIO
           // ─────────────────────────────────────────────────────
@@ -88,7 +90,6 @@ class AjustesPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     // ── Cabecera ─────────────────────────────────
                     Row(
                       children: [
@@ -135,10 +136,8 @@ class AjustesPage extends StatelessWidget {
                             useRootNavigator: true,
                             builder: (_) => _DialogEditarOrganizador(
                               organizador: organizador,
-                              onGuardado: (actualizado) =>
-                                  appState.actualizarOrganizadorActual(
-                                actualizado,
-                              ),
+                              onGuardado: (actualizado) => appState
+                                  .actualizarOrganizadorActual(actualizado),
                             ),
                           ),
                         ),
@@ -150,13 +149,19 @@ class AjustesPage extends StatelessWidget {
                     // ── Email ───────────────────────────────────
                     Row(
                       children: [
-                        Icon(Icons.email_outlined,
-                            size: 16, color: Colors.grey[600]),
+                        Icon(
+                          Icons.email_outlined,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
                         const SizedBox(width: 8),
-                        Text(
-                          organizador.emailEduca,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                        Expanded(
+                          child: Text(
+                            organizador.emailEduca,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            softWrap: true,
                           ),
                         ),
                       ],
@@ -166,13 +171,19 @@ class AjustesPage extends StatelessWidget {
                     // ── Centro ──────────────────────────────────
                     Row(
                       children: [
-                        Icon(Icons.school_outlined,
-                            size: 16, color: Colors.grey[600]),
+                        Icon(
+                          Icons.school_outlined,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
                         const SizedBox(width: 8),
-                        Text(
-                          '${organizador.centro} — ${organizador.codigoCentro}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                        Expanded(
+                          child: Text(
+                            '${organizador.centro} — ${organizador.codigoCentro}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            softWrap: true,
                           ),
                         ),
                       ],
@@ -253,6 +264,10 @@ class AjustesPage extends StatelessWidget {
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.primary,
                               ),
+                              textAlign: TextAlign.center,
+                            ),
+                            style: TextButton.styleFrom(
+                              alignment: Alignment.center, 
                             ),
                           ),
                         ),
@@ -287,10 +302,7 @@ class AjustesPage extends StatelessWidget {
               const Icon(Icons.dark_mode_outlined),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  'Modo oscuro',
-                  style: theme.textTheme.bodyMedium,
-                ),
+                child: Text('Modo oscuro', style: theme.textTheme.bodyMedium),
               ),
               Switch(
                 value: appState.isDarkTheme,
@@ -367,8 +379,7 @@ class AjustesPage extends StatelessWidget {
 
 // ─────────────────────────────────────────────
 // DIÁLOGO EDITAR ORGANIZADOR
-// Actualiza nombre, apellidos, centro y código
-// en Firestore. El email no es editable aquí.
+// Actualiza nombre, apellidos, centro y código en Firestore. El email no es editable aquí.
 // ─────────────────────────────────────────────
 
 class _DialogEditarOrganizador extends StatefulWidget {
@@ -396,11 +407,11 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
   void initState() {
     super.initState();
     _nombreCtrl = TextEditingController(text: widget.organizador.nombre);
-    _apellidosCtrl =
-        TextEditingController(text: widget.organizador.apellidos);
+    _apellidosCtrl = TextEditingController(text: widget.organizador.apellidos);
     _centroCtrl = TextEditingController(text: widget.organizador.centro);
-    _codigoCentroCtrl =
-        TextEditingController(text: widget.organizador.codigoCentro);
+    _codigoCentroCtrl = TextEditingController(
+      text: widget.organizador.codigoCentro,
+    );
   }
 
   @override
@@ -413,8 +424,9 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
   }
 
   void _snack(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _guardar() async {
@@ -445,11 +457,11 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
           .collection('participantes')
           .doc(uid)
           .update({
-        'nombre': _nombreCtrl.text.trim(),
-        'apellidos': _apellidosCtrl.text.trim(),
-        'centro': _centroCtrl.text.trim(),
-        'codigoCentro': _codigoCentroCtrl.text.trim(),
-      });
+            'nombre': _nombreCtrl.text.trim(),
+            'apellidos': _apellidosCtrl.text.trim(),
+            'centro': _centroCtrl.text.trim(),
+            'codigoCentro': _codigoCentroCtrl.text.trim(),
+          });
 
       final actualizado = Organizador(
         idParticipante: uid,
@@ -480,25 +492,28 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Editar datos'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Email: solo lectura
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Email (no editable)',
-                hintText: widget.organizador.emailEduca,
-                prefixIcon: const Icon(Icons.lock_outline),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Email: solo lectura
+              TextField(
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Email (no editable)',
+                  hintText: widget.organizador.emailEduca,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            _campo(_nombreCtrl, 'Nombre'),
-            _campo(_apellidosCtrl, 'Apellidos'),
-            _campo(_centroCtrl, 'Centro educativo'),
-            _campo(_codigoCentroCtrl, 'Código de centro'),
-          ],
+              const SizedBox(height: 12),
+              _campo(_nombreCtrl, 'Nombre'),
+              _campo(_apellidosCtrl, 'Apellidos'),
+              _campo(_centroCtrl, 'Centro educativo'),
+              _campo(_codigoCentroCtrl, 'Código de centro'),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -527,6 +542,8 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
         controller: ctrl,
         enabled: !_cargando,
         decoration: InputDecoration(labelText: label),
+        minLines: 1,
+        maxLines: 3,
       ),
     );
   }
@@ -534,10 +551,8 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
 
 // ─────────────────────────────────────────────
 // DIÁLOGO RECUPERAR CONTRASEÑA
-// Envía un email de restablecimiento a la
-// dirección del organizador activo.
-// El email viene pre-rellenado pero es editable
-// por si quiere enviarlo a otra dirección.
+// Envía un email de restablecimiento a la dirección del organizador activo.
+// El email viene pre-rellenado pero es editable por si quiere enviarlo a otra dirección.
 // ─────────────────────────────────────────────
 
 class _DialogRecuperarContrasena extends StatefulWidget {
@@ -576,9 +591,9 @@ class _DialogRecuperarContrasenaState
     final email = _emailCtrl.text.trim();
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Introduce tu email')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Introduce tu email')));
       return;
     }
     if (!_emailPattern.hasMatch(email)) {
@@ -596,9 +611,7 @@ class _DialogRecuperarContrasenaState
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Email de restablecimiento enviado a $email'),
-          ),
+          SnackBar(content: Text('Email de restablecimiento enviado a $email')),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -608,8 +621,9 @@ class _DialogRecuperarContrasenaState
         'invalid-email' => 'El formato del email no es válido',
         _ => 'Error: ${e.message}',
       };
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(mensaje)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(mensaje)));
     }
   }
 
@@ -617,25 +631,30 @@ class _DialogRecuperarContrasenaState
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Restablecer contraseña'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Te enviaremos un enlace para restablecer tu contraseña.',
-            style: TextStyle(color: Colors.black54),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _emailCtrl,
-            enabled: !_cargando,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Te enviaremos un enlace para restablecer tu contraseña.',
+              style: TextStyle(color: Colors.black54),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailCtrl,
+              enabled: !_cargando,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined),
+                border: OutlineInputBorder(),
+              ),
+              minLines: 1,
+              maxLines: 2,
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -659,10 +678,8 @@ class _DialogRecuperarContrasenaState
 
 // ─────────────────────────────────────────────
 // DIÁLOGO CAMBIAR EMAIL
-// Re-autentica al organizador con su contraseña
-// actual y envía un enlace de verificación al
-// nuevo email. El cambio solo se aplica cuando
-// el organizador pulsa el enlace del email.
+// Re-autentica al organizador con su contraseña actual y envía un enlace de verificación al nuevo email.
+// El cambio solo se aplica cuando el organizador pulsa el enlace del email.
 // ─────────────────────────────────────────────
 
 class _DialogCambiarEmail extends StatefulWidget {
@@ -696,8 +713,9 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
   }
 
   void _snack(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _enviar() async {
@@ -778,47 +796,50 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Cambiar correo electrónico'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Introduce tu nuevo correo. Te enviaremos un enlace de '
-            'confirmación. Inicia sesión de nuevo tras verificarlo.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54, fontSize: 13),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _nuevoEmailCtrl,
-            enabled: !_cargando,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Nuevo correo',
-              prefixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Introduce tu nuevo correo. Te enviaremos un enlace de '
+              'confirmación. Por favor, inicia sesión de nuevo tras realizar el cambio.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54, fontSize: 13),
             ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _passwordCtrl,
-            enabled: !_cargando,
-            obscureText: !_passwordVisible,
-            decoration: InputDecoration(
-              labelText: 'Contraseña actual',
-              prefixIcon: const Icon(Icons.lock_outline),
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _passwordVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility,
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nuevoEmailCtrl,
+              enabled: !_cargando,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Nuevo correo',
+                prefixIcon: Icon(Icons.email_outlined),
+                border: OutlineInputBorder(),
+              ),
+              minLines: 1,
+              maxLines: 2,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _passwordCtrl,
+              enabled: !_cargando,
+              obscureText: !_passwordVisible,
+              decoration: InputDecoration(
+                labelText: 'Contraseña actual',
+                prefixIcon: const Icon(Icons.lock_outline),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _passwordVisible = !_passwordVisible),
                 ),
-                onPressed: () =>
-                    setState(() => _passwordVisible = !_passwordVisible),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -842,9 +863,7 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
 
 // ─────────────────────────────────────────────
 // DIÁLOGO BORRAR CUENTA
-// Re-autentica con contraseña, elimina el
-// documento de Firestore y borra la cuenta
-// de Firebase Auth.
+// Re-autentica con contraseña, elimina el documento de Firestore y borra la cuenta de Firebase Auth.
 // ─────────────────────────────────────────────
 
 class _DialogBorrarCuenta extends StatefulWidget {
@@ -868,8 +887,9 @@ class _DialogBorrarCuentaState extends State<_DialogBorrarCuenta> {
   }
 
   void _snack(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _borrar() async {
@@ -927,36 +947,37 @@ class _DialogBorrarCuentaState extends State<_DialogBorrarCuenta> {
     return AlertDialog(
       icon: const Icon(Icons.warning_amber_rounded),
       title: const Text('Borrar mi cuenta'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Para confirmar, introduce tu contraseña. '
-            'Esta acción es irreversible y eliminará todos tus datos.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _passwordCtrl,
-            enabled: !_cargando,
-            obscureText: !_passwordVisible,
-            decoration: InputDecoration(
-              labelText: 'Contraseña',
-              prefixIcon: const Icon(Icons.lock_outline),
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _passwordVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Para confirmar, introduce tu contraseña. '
+              'Esta acción es irreversible y eliminará todos tus datos.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordCtrl,
+              enabled: !_cargando,
+              obscureText: !_passwordVisible,
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                prefixIcon: const Icon(Icons.lock_outline),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _passwordVisible = !_passwordVisible),
                 ),
-                onPressed: () =>
-                    setState(() => _passwordVisible = !_passwordVisible),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -973,9 +994,7 @@ class _DialogBorrarCuentaState extends State<_DialogBorrarCuenta> {
                 )
               : Text(
                   'Borrar cuenta',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
         ),
       ],

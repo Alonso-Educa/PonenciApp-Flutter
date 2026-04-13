@@ -299,9 +299,18 @@ class _DetalleEventoPageState extends State<DetalleEventoPage> {
                                         child: Text('${p.orden}'),
                                       ),
                                       title: Text(p.titulo),
-                                      subtitle: Text(
-                                        '${p.ponente}\n'
-                                        '${p.horaInicio} - ${p.horaFin}',
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            p.ponente.isEmpty
+                                                ? 'Sin ponente:'
+                                                : p.ponente,
+                                          ),
+                                          Text(
+                                            '${p.horaInicio} - ${p.horaFin}',
+                                          ),
+                                        ],
                                       ),
                                       isThreeLine: true,
                                       onTap: () => Navigator.push(

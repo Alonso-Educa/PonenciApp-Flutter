@@ -34,7 +34,6 @@ class DetallePonenciaPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 // ── Cabecera: orden + título ──────────────────
                 Row(
                   children: [
@@ -76,15 +75,16 @@ class DetallePonenciaPage extends StatelessWidget {
                           context,
                           icono: Icons.person,
                           etiqueta: 'Ponente',
-                          valor: ponencia.ponente,
+                          valor: ponencia.ponente.isEmpty
+                              ? ' - '
+                              : ponencia.ponente,
                         ),
                         const Divider(height: 24),
                         _fila(
                           context,
                           icono: Icons.schedule,
                           etiqueta: 'Horario',
-                          valor:
-                              '${ponencia.horaInicio} – ${ponencia.horaFin}',
+                          valor: '${ponencia.horaInicio} – ${ponencia.horaFin}',
                         ),
                         const Divider(height: 24),
                         _fila(
@@ -134,9 +134,7 @@ class DetallePonenciaPage extends StatelessWidget {
                           ),
                         ),
                         icon: const Icon(Icons.qr_code),
-                        label: const Text(
-                          'Ver QR de Check-in de la ponencia',
-                        ),
+                        label: const Text('Ver QR de Check-in de la ponencia'),
                       ),
                     ),
                   ),
@@ -158,8 +156,7 @@ class DetallePonenciaPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icono,
-            size: 22, color: Theme.of(context).colorScheme.primary),
+        Icon(icono, size: 22, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
