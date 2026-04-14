@@ -9,8 +9,7 @@ import '../../models/organizador.dart';
 
 // ─────────────────────────────────────────────
 // PANTALLA DE LOGIN
-// Pantalla inicial de la aplicación. El organizador
-// introduce su email y contraseña para acceder.
+// Pantalla inicial de la aplicación. El organizador introduce su email y contraseña para acceder.
 // Si no tiene cuenta, puede ir a registrarse.
 // ─────────────────────────────────────────────
 class LoginPage extends StatefulWidget {
