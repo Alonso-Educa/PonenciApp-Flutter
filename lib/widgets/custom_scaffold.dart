@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'icono_usuario.dart';
 
 // ─────────────────────────────────────────────
 // SCAFFOLD GLOBAL DE LA APLICACIÓN
@@ -19,10 +20,20 @@ class CustomScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        // ── Icono de usuario en todas las pantallas ──────────
+        actions: const [IconoUsuario()],
+      ),
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: body,
       floatingActionButton: fab,
+      bottomNavigationBar: Container(
+        height: 28,
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        alignment: Alignment.center,
+        child: Text('PonenciApp - Panel de Organizador', style: const TextStyle(fontSize: 12, color: Colors.white)),
+      ),
     );
   }
 }

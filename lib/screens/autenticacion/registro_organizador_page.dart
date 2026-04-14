@@ -81,7 +81,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
 
       // ── Paso 2: guardar datos en Firestore ───────────────────
       await FirebaseFirestore.instance
-          .collection('participantes')
+          .collection('usuarios')
           .doc(uid)
           .set({
         'nombre': _nombreCtrl.text.trim(),
@@ -92,6 +92,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
         'rol': 'organizador',
         'fechaRegistro': _formatearFechaHora(DateTime.now()),
         'idEvento': '',
+        'fotoPerfilUrl': ''
       });
 
       // ── Paso 3: cerrar sesión para que inicie sesión desde el login ──

@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // ── Paso 2: leer el documento de Firestore ───────────────
       final doc = await FirebaseFirestore.instance
-          .collection('participantes')
+          .collection('usuarios')
           .doc(uid)
           .get();
 
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // ── Paso 4: cargar datos en el estado global ─────────────
       final organizador = Organizador(
-        idParticipante: uid,
+        idOrganizador: uid,
         nombre: doc.getString('nombre') ?? '',
         apellidos: doc.getString('apellidos') ?? '',
         emailEduca: doc.getString('emailEduca') ?? '',
@@ -115,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
         idEvento: doc.getString('idEvento') ?? '',
         // La contraseña no se guarda localmente por seguridad
         password: '',
+        fotoPerfilUrl: doc.getString('fotoPerfilUrl') ?? '',
       );
 
       appState.organizadorActual = organizador;

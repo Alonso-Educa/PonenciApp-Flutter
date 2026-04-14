@@ -3,7 +3,7 @@
 // Representa a un organizador registrado en la plataforma.
 // ─────────────────────────────────────────────
 class Organizador {
-  final String idParticipante;
+  final String idOrganizador;
   final String nombre;
   final String apellidos;
   final String emailEduca;
@@ -13,9 +13,10 @@ class Organizador {
   final String fechaRegistro;
   final String idEvento;
   final String password;
+  final String fotoPerfilUrl;
 
   Organizador({
-    required this.idParticipante,
+    required this.idOrganizador,
     required this.nombre,
     required this.apellidos,
     required this.emailEduca,
@@ -25,6 +26,7 @@ class Organizador {
     this.fechaRegistro = '',
     this.idEvento = '',
     required this.password,
+    required this.fotoPerfilUrl,
   });
 
   Organizador copyWith({
@@ -37,9 +39,10 @@ class Organizador {
     String? fechaRegistro,
     String? idEvento,
     String? password,
+    String? fotoPerfilUrl,
   }) {
     return Organizador(
-      idParticipante: idParticipante,
+      idOrganizador: idOrganizador,
       nombre: nombre ?? this.nombre,
       apellidos: apellidos ?? this.apellidos,
       emailEduca: emailEduca ?? this.emailEduca,
@@ -49,6 +52,7 @@ class Organizador {
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
       idEvento: idEvento ?? this.idEvento,
       password: password ?? this.password,
+      fotoPerfilUrl: fotoPerfilUrl ?? this.fotoPerfilUrl,
     );
   }
 }

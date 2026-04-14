@@ -13,6 +13,7 @@ class Participante {
   final String fechaRegistro;
   final String idEvento;
   final String password;
+  final String fotoPerfilUrl;
 
   Participante({
     required this.idParticipante,
@@ -25,6 +26,7 @@ class Participante {
     this.fechaRegistro = '',
     this.idEvento = '',
     required this.password,
+    this.fotoPerfilUrl = '',
   });
 
   Participante copyWith({
@@ -37,6 +39,7 @@ class Participante {
     String? fechaRegistro,
     String? idEvento,
     String? password,
+    String? fotoPerfilUrl,
   }) {
     return Participante(
       idParticipante: idParticipante,
@@ -49,6 +52,7 @@ class Participante {
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
       idEvento: idEvento ?? this.idEvento,
       password: password ?? this.password,
+      fotoPerfilUrl: fotoPerfilUrl ?? this.fotoPerfilUrl,
     );
   }
 }

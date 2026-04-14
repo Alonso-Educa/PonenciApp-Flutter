@@ -95,7 +95,7 @@ class _CrearParticipanteState extends State<CrearParticipante> {
 
       // Paso 2: guardar datos en Firestore
       await FirebaseFirestore.instance
-          .collection('participantes')
+          .collection('usuarios')
           .doc(uidParticipante)
           .set({
             'nombre': _nombreCtrl.text.trim(),
@@ -106,6 +106,7 @@ class _CrearParticipanteState extends State<CrearParticipante> {
             'rol': 'participante',
             'fechaRegistro': _formatearFechaHora(DateTime.now()),
             'idEvento': '',
+            'fotoPerfilUrl': ''
           });
 
       // Paso 3: cerrar la sesión del participante recién creado

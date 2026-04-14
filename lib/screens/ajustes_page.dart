@@ -93,19 +93,34 @@ class AjustesPage extends StatelessWidget {
                     // ── Cabecera ─────────────────────────────────
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: theme.colorScheme.tertiary,
-                          child: Text(
-                            organizador.nombre.isNotEmpty
-                                ? organizador.nombre[0].toUpperCase()
-                                : 'O',
-                            style: TextStyle(
-                              color: theme.colorScheme.onTertiary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
+                        // ── Avatar con foto o inicial ──────────────────
+                        Builder(
+                          builder: (context) {
+                            final tieneFoto =
+                                organizador.fotoPerfilUrl.trim() != '' &&
+                                organizador.fotoPerfilUrl.trim().isNotEmpty;
+                            return CircleAvatar(
+                              radius: 24,
+                              backgroundColor: theme.colorScheme.tertiary,
+                              backgroundImage: tieneFoto
+                                  ? NetworkImage(
+                                      organizador.fotoPerfilUrl.trim(),
+                                    )
+                                  : null,
+                              child: tieneFoto
+                                  ? null
+                                  : Text(
+                                      organizador.nombre.isNotEmpty
+                                          ? organizador.nombre[0].toUpperCase()
+                                          : 'O',
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onTertiary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                            );
+                          },
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -214,8 +229,7 @@ class AjustesPage extends StatelessWidget {
                                   // el nuevo email en la UI
                                   appState.actualizarOrganizadorActual(
                                     Organizador(
-                                      idParticipante:
-                                          organizador.idParticipante,
+                                      idOrganizador: organizador.idOrganizador,
                                       nombre: organizador.nombre,
                                       apellidos: organizador.apellidos,
                                       emailEduca: nuevoEmail,
@@ -225,6 +239,7 @@ class AjustesPage extends StatelessWidget {
                                       fechaRegistro: organizador.fechaRegistro,
                                       idEvento: organizador.idEvento,
                                       password: organizador.password,
+                                      fotoPerfilUrl: organizador.fotoPerfilUrl,
                                     ),
                                   );
                                 },
@@ -267,7 +282,7 @@ class AjustesPage extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                             style: TextButton.styleFrom(
-                              alignment: Alignment.center, 
+                              alignment: Alignment.center,
                             ),
                           ),
                         ),
@@ -450,21 +465,18 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
     setState(() => _cargando = true);
 
     try {
-      final uid = widget.organizador.idParticipante;
+      final uid = widget.organizador.idOrganizador;
 
       // Actualiza en Firestore
-      await FirebaseFirestore.instance
-          .collection('participantes')
-          .doc(uid)
-          .update({
-            'nombre': _nombreCtrl.text.trim(),
-            'apellidos': _apellidosCtrl.text.trim(),
-            'centro': _centroCtrl.text.trim(),
-            'codigoCentro': _codigoCentroCtrl.text.trim(),
-          });
+      await FirebaseFirestore.instance.collection('usuarios').doc(uid).update({
+        'nombre': _nombreCtrl.text.trim(),
+        'apellidos': _apellidosCtrl.text.trim(),
+        'centro': _centroCtrl.text.trim(),
+        'codigoCentro': _codigoCentroCtrl.text.trim(),
+      });
 
       final actualizado = Organizador(
-        idParticipante: uid,
+        idOrganizador: uid,
         nombre: _nombreCtrl.text.trim(),
         apellidos: _apellidosCtrl.text.trim(),
         emailEduca: widget.organizador.emailEduca,
@@ -474,6 +486,7 @@ class _DialogEditarOrganizadorState extends State<_DialogEditarOrganizador> {
         fechaRegistro: widget.organizador.fechaRegistro,
         idEvento: widget.organizador.idEvento,
         password: widget.organizador.password,
+        fotoPerfilUrl: widget.organizador.fotoPerfilUrl,
       );
 
       widget.onGuardado(actualizado);
@@ -761,7 +774,7 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
       // Se hace ya para que la UI sea consistente, aunque Auth
       // no lo cambia hasta que el usuario verifique el enlace
       await FirebaseFirestore.instance
-          .collection('participantes')
+          .collection('usuarios')
           .doc(user.uid)
           .update({'emailEduca': nuevoEmail});
 
@@ -915,7 +928,7 @@ class _DialogBorrarCuentaState extends State<_DialogBorrarCuenta> {
 
       // Paso 2: eliminar documento de Firestore
       await FirebaseFirestore.instance
-          .collection('participantes')
+          .collection('usuarios')
           .doc(user.uid)
           .delete();
 
