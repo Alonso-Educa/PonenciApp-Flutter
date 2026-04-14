@@ -1,27 +1,4 @@
 {
-  "flutter": {
-    "platforms": {
-      "android": {
-        "default": {
-          "projectId": "ponenciapp",
-          "appId": "1:782692490355:android:336d59140e5a0226efde06",
-          "fileOutput": "android/app/google-services.json"
-        }
-      },
-      "dart": {
-        "lib/firebase_options.dart": {
-          "projectId": "ponenciapp",
-          "configurations": {
-            "android": "1:782692490355:android:336d59140e5a0226efde06",
-            "ios": "1:782692490355:ios:f569529fc37e038befde06",
-            "macos": "1:782692490355:ios:f569529fc37e038befde06",
-            "web": "1:782692490355:web:2bb1bf655ffb774befde06",
-            "windows": "1:782692490355:web:b469eaeec80e7ca8efde06"
-          }
-        }
-      }
-    }
-  },
   "hosting": {
     "public": "build/web",
     "ignore": [
