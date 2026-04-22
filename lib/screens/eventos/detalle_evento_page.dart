@@ -304,7 +304,7 @@ class _DetalleEventoPageState extends State<DetalleEventoPage> {
                                         children: [
                                           Text(
                                             p.ponente.isEmpty
-                                                ? 'Sin ponente:'
+                                                ? 'Sin ponente'
                                                 : p.ponente,
                                           ),
                                           Text(
