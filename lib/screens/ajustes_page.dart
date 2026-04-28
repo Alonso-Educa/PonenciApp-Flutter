@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'dart:html' as html;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/organizador.dart';
@@ -329,6 +331,45 @@ class AjustesPage extends StatelessWidget {
           const SizedBox(height: 24),
 
           // ─────────────────────────────────────────────────────
+          // SECCIÓN: AYUDA
+          // ─────────────────────────────────────────────────────
+          const Divider(),
+          const SizedBox(height: 8),
+          Text(
+            'Ayuda',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Si tienes alguna duda, no dudes en ponernos en contacto',
+            style: theme.textTheme.bodySmall?.copyWith(color: Colors.black54),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () => html.window.open(
+              'https://ponenciapp.web.app/ayuda.html',
+              '_blank',
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.help, color: Color(0xFF475D92)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Página de ayuda',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ─────────────────────────────────────────────────────
           // SECCIÓN: GESTIÓN DE CUENTA
           // ─────────────────────────────────────────────────────
           const Divider(),
@@ -584,7 +625,8 @@ class _DialogRecuperarContrasenaState
   bool _cargando = false;
 
   final _emailPattern = RegExp(
-    r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    r'^[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}_\-]+(\.[\p{L}\p{N}_\-]+)*\.[\p{L}]{2,}$',
+    unicode: true,
   );
 
   @override
@@ -657,6 +699,9 @@ class _DialogRecuperarContrasenaState
             TextField(
               controller: _emailCtrl,
               enabled: !_cargando,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Email',
@@ -715,7 +760,8 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
   bool _cargando = false;
 
   final _emailPattern = RegExp(
-    r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    r'^[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}_\-]+(\.[\p{L}\p{N}_\-]+)*\.[\p{L}]{2,}$',
+    unicode: true,
   );
 
   @override
@@ -824,6 +870,9 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
             TextField(
               controller: _nuevoEmailCtrl,
               enabled: !_cargando,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Nuevo correo',
@@ -837,6 +886,9 @@ class _DialogCambiarEmailState extends State<_DialogCambiarEmail> {
             TextField(
               controller: _passwordCtrl,
               enabled: !_cargando,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
               obscureText: !_passwordVisible,
               decoration: InputDecoration(
                 labelText: 'Contraseña actual',
@@ -975,6 +1027,9 @@ class _DialogBorrarCuentaState extends State<_DialogBorrarCuenta> {
             TextField(
               controller: _passwordCtrl,
               enabled: !_cargando,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
               obscureText: !_passwordVisible,
               decoration: InputDecoration(
                 labelText: 'Contraseña',

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="PonenciApp - Página de ayuda. Gestiona eventos y ponencias educativas de forma sencilla.">
+  <title>PonenciApp — Ayuda</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="css/ayuda.css">
+</head>
+
+<body>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <nav class="navbar" role="navigation" aria-label="Navegaci&oacute;n principal">
+    <a href="#" class="navbar-brand" aria-label="PonenciApp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+      </svg>
+      PonenciApp
+    </a>
+
+    <button class="nav-toggle" aria-label="Abrir men&uacute;" onclick="toggleNav()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="#como-funciona">C&oacute;mo funciona</a></li>
+      <li><a href="#funcionalidades">Funcionalidades</a></li>
+      <li><a href="#faq">Preguntas frecuentes</a></li>
+      <li><a href="#seguridad">Seguridad</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="#descargar">Descargar</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="hero">
+    <img src="favicon.png" alt="Logo de PonenciApp" class="hero-logo">
+    <h1>PonenciApp</h1>
+    <p>Tu plataforma integral para la gesti&oacute;n de eventos y ponencias educativas. Organiza, participa y
+      colabora de forma sencilla.</p>
+
+    <div class="hero-badges">
+      <span class="badge">
+        <svg viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" fill="none" stroke="#fff" stroke-width="2" />
+          <circle cx="9" cy="7" r="4" fill="none" stroke="#fff" stroke-width="2" />
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" fill="none" stroke="#fff" stroke-width="2" />
+        </svg>
+        Organizadores y Participantes
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 24 24">
+          <rect x="5" y="2" width="14" height="20" rx="2" fill="none" stroke="#fff" stroke-width="2" />
+          <line x1="12" y1="18" x2="12.01" y2="18" stroke="#fff" stroke-width="2" />
+        </svg>
+        App m&oacute;vil Android
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="#fff" stroke-width="2" />
+          <line x1="8" y1="21" x2="16" y2="21" stroke="#fff" stroke-width="2" />
+          <line x1="12" y1="17" x2="12" y2="21" stroke="#fff" stroke-width="2" />
+        </svg>
+        Panel web
+      </span>
+    </div>
+  </header>
+
+  <!-- ═══════════ QU&Eacute; ES ═══════════ -->
+  <section id="que-es">
+    <h2 class="section-title">&iquest;Qu&eacute; es PonenciApp?</h2>
+    <p class="section-subtitle">Una herramienta pensada para el &aacute;mbito educativo que conecta a organizadores de
+      eventos con sus participantes.</p>
+
+    <div class="features-grid" style="grid-template-columns:1fr 1fr">
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">&#128188;</div>
+        <h3>Para organizadores</h3>
+        <p>Crea y gestiona eventos, a&ntilde;ade ponencias con horarios, genera c&oacute;digos QR de acceso, registra
+          participantes y consulta estad&iacute;sticas desde el <strong>panel web</strong> o la <strong>app
+            m&oacute;vil</strong>.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-green">&#127891;</div>
+        <h3>Para participantes</h3>
+        <p>&Uacute;nete a eventos con un c&oacute;digo, haz check-in escaneando un QR, consulta las ponencias
+          disponibles, val&oacute;ralas y usa el <strong>chatbot de IA</strong> para resolver dudas, todo desde la
+          <strong>app m&oacute;vil</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ C&Oacute;MO FUNCIONA ═══════════ -->
+  <section id="como-funciona">
+    <h2 class="section-title">&iquest;C&oacute;mo funciona?</h2>
+    <p class="section-subtitle">Selecciona tu rol para ver los pasos a seguir.</p>
+
+    <!-- Tabs -->
+    <div class="role-tabs" role="tablist">
+      <button class="role-tab active" role="tab" aria-selected="true" onclick="switchRole('organizador')">&#128188;
+        Soy Organizador</button>
+      <button class="role-tab" role="tab" aria-selected="false" onclick="switchRole('participante')">&#127891; Soy
+        Participante</button>
+    </div>
+
+    <!-- Contenido Organizador -->
+    <div class="role-content active" id="role-organizador">
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>
+            <h3>Reg&iacute;strate como organizador</h3>
+            <p>Crea tu cuenta con tu email educativo, nombre, centro y c&oacute;digo de centro. Puedes registrarte
+              desde el <strong>panel web</strong> o la <strong>app m&oacute;vil</strong> usando email/contrase&ntilde;a,
+              Google o Microsoft (Educacyl).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>
+            <h3>Crea tu evento</h3>
+            <p>Desde la secci&oacute;n <em>Mis Eventos</em>, pulsa el bot&oacute;n <strong>+</strong> para crear un
+              nuevo evento indicando nombre, fecha, lugar y descripci&oacute;n. Se generar&aacute; un c&oacute;digo
+              &uacute;nico autom&aacute;ticamente (ej. <code>FORM-X7K2</code>).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>
+            <h3>A&ntilde;ade ponencias</h3>
+            <p>Dentro de cada evento, a&ntilde;ade las ponencias o charlas con su t&iacute;tulo, ponente,
+              descripci&oacute;n, hora de inicio y fin. Las ponencias se ordenan autom&aacute;ticamente.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div>
+            <h3>Comparte el c&oacute;digo QR</h3>
+            <p>Genera y comparte el c&oacute;digo QR del evento para que los participantes puedan hacer check-in el
+              d&iacute;a de la celebraci&oacute;n. Tambi&eacute;n puedes compartir el c&oacute;digo alfanum&eacute;rico
+              para que se unan al evento.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">5</div>
+          <div>
+            <h3>Gestiona y consulta estad&iacute;sticas</h3>
+            <p>Desde el panel web puedes ver estad&iacute;sticas de tus eventos: n&uacute;mero total de eventos,
+              ponencias, pr&oacute;ximo evento y participantes registrados. Desde la app m&oacute;vil puedes exportar
+              asistencias en <strong>PDF</strong> o <strong>Excel</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Participante -->
+    <div class="role-content" id="role-participante">
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>
+            <h3>Desc&aacute;rgate la app e inicia sesi&oacute;n</h3>
+            <p>Descarga PonenciApp en tu dispositivo Android. Puedes iniciar sesi&oacute;n con email y
+              contrase&ntilde;a, <strong>Google</strong> o <strong>Microsoft (Educacyl)</strong>. Si no tienes cuenta,
+              reg&iacute;strate completando tus datos.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>
+            <h3>&Uacute;nete a un evento</h3>
+            <p>Introduce el c&oacute;digo que te ha proporcionado el organizador del evento (ej.
+              <code>FORM-X7K2</code>). Una vez unido, tendr&aacute;s acceso a toda la informaci&oacute;n del evento.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>
+            <h3>Haz check-in con QR</h3>
+            <p>El d&iacute;a del evento, escanea el c&oacute;digo QR que el organizador muestra para registrar tu
+              asistencia. Se abrir&aacute; la c&aacute;mara de tu dispositivo autom&aacute;ticamente.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div>
+            <h3>Consulta las ponencias</h3>
+            <p>Visualiza todas las ponencias del evento con su horario, ponente y descripci&oacute;n. Accede al
+              detalle de cada una para m&aacute;s informaci&oacute;n.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">5</div>
+          <div>
+            <h3>Val&oacute;ralas y da tu opini&oacute;n</h3>
+            <p>Cuando las ponencias hayan terminado, podr&aacute;s valorar tanto el evento como cada ponencia
+              individual con una puntuaci&oacute;n de estrellas y un comentario opcional.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FUNCIONALIDADES ═══════════ -->
+  <section id="funcionalidades">
+    <h2 class="section-title">Funcionalidades principales</h2>
+    <p class="section-subtitle">Todo lo que necesitas para gestionar eventos educativos en un solo lugar.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">&#128197;</div>
+        <h3>Gesti&oacute;n de eventos</h3>
+        <p>Crea, edita y elimina eventos con nombre, fecha, lugar y descripci&oacute;n. Cada evento recibe un
+          c&oacute;digo &uacute;nico para compartir.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-green">&#127908;</div>
+        <h3>Ponencias organizadas</h3>
+        <p>A&ntilde;ade m&uacute;ltiples ponencias a cada evento con ponente, horarios y orden personalizado. Gestiona
+          el programa f&aacute;cilmente.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-orange">&#128247;</div>
+        <h3>Check-in con QR</h3>
+        <p>Genera c&oacute;digos QR para cada evento. Los participantes escanean el QR con la c&aacute;mara de su
+          m&oacute;vil para registrar asistencia.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-purple">&#11088;</div>
+        <h3>Valoraciones</h3>
+        <p>Los participantes pueden puntuar con estrellas y comentar tanto el evento global como cada ponencia
+          individual.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-teal">&#129302;</div>
+        <h3>Chatbot con IA</h3>
+        <p>Asistente inteligente integrado en la app m&oacute;vil, potenciado por inteligencia artificial, para
+          resolver dudas en tiempo real.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-red">&#128202;</div>
+        <h3>Estad&iacute;sticas y exportaci&oacute;n</h3>
+        <p>Panel de estad&iacute;sticas con res&uacute;menes de eventos y ponencias. Exporta asistencias en PDF o
+          Excel desde la app m&oacute;vil.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">&#128100;</div>
+        <h3>Gesti&oacute;n de perfil</h3>
+        <p>Edita tus datos personales, cambia la foto de perfil, email o contrase&ntilde;a. Vincula cuentas de Google
+          o Microsoft.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-green">&#127769;</div>
+        <h3>Modo oscuro</h3>
+        <p>Cambia entre tema claro y oscuro en cualquier momento desde los ajustes, tanto en la web como en la app
+          m&oacute;vil.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon fi-orange">&#128274;</div>
+        <h3>M&uacute;ltiples m&eacute;todos de acceso</h3>
+        <p>Inicia sesi&oacute;n con email y contrase&ntilde;a, Google o Microsoft (Educacyl). Vincula varias cuentas
+          para mayor flexibilidad.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FAQ ═══════════ -->
+  <section id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <p class="section-subtitle">Resolvemos las dudas m&aacute;s habituales sobre PonenciApp.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Necesito descargar algo para usar PonenciApp como organizador?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            No necesariamente. Como organizador puedes gestionar todo desde el <strong>panel web</strong>, al que
+            accedes
+            desde cualquier navegador sin instalar nada. Tambi&eacute;n puedes usar la app m&oacute;vil Android si lo
+            prefieres, que ofrece funcionalidades adicionales como la exportaci&oacute;n de asistencias.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;C&oacute;mo se unen los participantes a mi evento?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Al crear un evento se genera un c&oacute;digo &uacute;nico (ej. <code>FORM-X7K2</code>). Comparte este
+            c&oacute;digo con los participantes. Ellos solo tienen que introducirlo en la app m&oacute;vil desde la
+            pantalla <em>Unirse a un evento</em>.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Qu&eacute; es el check-in con c&oacute;digo QR?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            El organizador genera un c&oacute;digo QR &uacute;nico para cada evento. El d&iacute;a de la
+            celebraci&oacute;n, los participantes escanean el QR con su m&oacute;vil para confirmar su asistencia.
+            Esto queda registrado autom&aacute;ticamente en el sistema y se puede exportar despu&eacute;s.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Puedo iniciar sesi&oacute;n con mi cuenta de Google o Microsoft?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            S&iacute;. En la app m&oacute;vil puedes iniciar sesi&oacute;n con <strong>Google</strong> o
+            <strong>Microsoft (Educacyl)</strong>, adem&aacute;s del m&eacute;todo cl&aacute;sico de email y
+            contrase&ntilde;a. Tambi&eacute;n es posible vincular varios proveedores a la misma cuenta desde la
+            pantalla de Ajustes.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Puedo valorar las ponencias de un evento?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            S&iacute;. Como participante, una vez que te has unido a un evento y has hecho check-in, puedes acceder a
+            la secci&oacute;n de <em>Valoraciones</em> donde puedes dar una puntuaci&oacute;n de 1 a 5 estrellas
+            tanto al evento en general como a cada ponencia individual, y a&ntilde;adir comentarios opcionales.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Qu&eacute; es el chatbot y c&oacute;mo funciona?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            PonenciApp incluye un asistente con inteligencia artificial dentro de la app m&oacute;vil. Puedes hacerle
+            preguntas sobre el uso de la app, resolver dudas t&eacute;cnicas o pedir ayuda general. Est&aacute;
+            disponible en la secci&oacute;n <em>Ajustes &gt; Nuestro chatbot de soporte</em>.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Puedo registrar participantes manualmente como organizador?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            S&iacute;. Desde el panel web, los organizadores pueden registrar participantes manualmente
+            introduci&eacute;ndoles nombre, apellidos, email educativo, centro, c&oacute;digo de centro y una
+            contrase&ntilde;a temporal. El participante podr&aacute; iniciar sesi&oacute;n con esos datos en la app
+            m&oacute;vil.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Mis datos est&aacute;n seguros?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            S&iacute;. PonenciApp utiliza <strong>Firebase Authentication</strong> para gestionar las cuentas de forma
+            segura y <strong>Cloud Firestore</strong> para almacenar los datos con cifrado en tr&aacute;nsito y en
+            reposo. Las contrase&ntilde;as nunca se almacenan en texto plano. Adem&aacute;s, puedes eliminar
+            completamente tu cuenta y datos en cualquier momento desde Ajustes.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Puedo cambiar mi email o contrase&ntilde;a?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            S&iacute;. Desde la pantalla de <em>Ajustes</em>, en la secci&oacute;n <em>Restablecer mis datos
+              privados</em>, puedes cambiar tu correo electr&oacute;nico o solicitar un restablecimiento de
+            contrase&ntilde;a. Se te pedir&aacute; que confirmes tu contrase&ntilde;a actual por seguridad.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          &iquest;Funciona sin conexi&oacute;n a internet?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            La app m&oacute;vil utiliza una base de datos local (Room) que almacena los datos del usuario, eventos y
+            ponencias. Si pierdes conexi&oacute;n temporalmente, podr&aacute;s seguir consultando la
+            informaci&oacute;n guardada. Sin embargo, para acciones como hacer check-in, valorar o crear eventos
+            necesitar&aacute;s conexi&oacute;n activa.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ SEGURIDAD ═══════════ -->
+  <section id="seguridad">
+    <h2 class="section-title">Seguridad y privacidad</h2>
+    <p class="section-subtitle">Tu informaci&oacute;n est&aacute; protegida en todo momento.</p>
+
+    <div class="security-grid">
+      <div class="security-item">
+        <div class="sec-icon">&#128272;</div>
+        <h4>Firebase Auth</h4>
+        <p>Autenticaci&oacute;n segura con soporte para email, Google y Microsoft.</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128215;</div>
+        <h4>Cloud Firestore</h4>
+        <p>Datos cifrados en tr&aacute;nsito y en reposo con reglas de seguridad.</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128274;</div>
+        <h4>Re-autenticaci&oacute;n</h4>
+        <p>Se requiere contrase&ntilde;a para cambios sensibles de cuenta.</p>
+      </div>
+      <div class="security-item">
+        <div class="sec-icon">&#128465;</div>
+        <h4>Derecho al olvido</h4>
+        <p>Puedes eliminar tu cuenta y todos tus datos en cualquier momento.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CONTACTO ═══════════ -->
+  <section class="contact-section" id="contacto">
+    <h2 class="section-title">Contacto</h2>
+    <p class="section-subtitle">&iquest;Tienes alguna duda o sugerencia? No dudes en escribirnos.</p>
+
+    <div class="contact-card">
+      <div class="contact-icon">&#9993;</div>
+      <div>
+        <h3>Env&iacute;anos un correo</h3>
+        <p>Si necesitas ayuda adicional, tienes alguna incidencia o quieres hacernos llegar una sugerencia, puedes
+          contactar con nosotros por email. Intentaremos responderte lo antes posible.</p>
+        <a href="mailto:soporte@ponenciapp.es" class="contact-email">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="M22 4l-10 8L2 4" />
+          </svg>
+          soporte@ponenciapp.es
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CTA / DESCARGAR ═══════════ -->
+  <section class="cta-section" id="descargar">
+    <h2>Empieza a usar PonenciApp</h2>
+    <p>Organiza tu pr&oacute;ximo evento educativo o &uacute;nete como participante. &iexcl;Es gratis!</p>
+    <div class="cta-buttons">
+      <a href="https://github.com/Alonso-Educa/PonenciApp-Android_Studio/releases/latest/download/PonenciApp.apk" class="btn btn-white" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Descargar APK
+      </a>
+      <a href="/" class="btn btn-outline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+        </svg>
+        Panel Web de Organizadores
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <p>&copy; 2025 PonenciApp &mdash; Gesti&oacute;n de eventos y ponencias educativas.</p>
+  </footer>
+
+  <script src="js/ayuda.js"></script>
+</body>
+
+</html>

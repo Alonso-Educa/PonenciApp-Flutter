@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/custom_scaffold.dart';
@@ -60,8 +61,9 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
   }
 
   void _mostrarError(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
   }
 
   Future<void> _registrar() async {
@@ -73,17 +75,14 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
       // ── Paso 1: crear cuenta en Firebase Auth ────────────────
       final resultado = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text.trim(),
-      );
+            email: _emailCtrl.text.trim(),
+            password: _passwordCtrl.text.trim(),
+          );
 
       final uid = resultado.user?.uid ?? '';
 
       // ── Paso 2: guardar datos en Firestore ───────────────────
-      await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .set({
+      await FirebaseFirestore.instance.collection('usuarios').doc(uid).set({
         'nombre': _nombreCtrl.text.trim(),
         'apellidos': _apellidosCtrl.text.trim(),
         'emailEduca': _emailCtrl.text.trim(),
@@ -92,7 +91,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
         'rol': 'organizador',
         'fechaRegistro': _formatearFechaHora(DateTime.now()),
         'idEvento': '',
-        'fotoPerfilUrl': ''
+        'fotoPerfilUrl': '',
       });
 
       // ── Paso 3: cerrar sesión para que inicie sesión desde el login ──
@@ -140,14 +139,10 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   // ── Cabecera ──────────────────────────────────
                   const Text(
                     'Crear cuenta de organizador',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
                   const Text(
@@ -176,6 +171,9 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                     obligatorio: true,
                     teclado: TextInputType.emailAddress,
                     esEmail: true,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                    ],
                   ),
                   _campo(
                     controller: _centroCtrl,
@@ -197,6 +195,9 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
                       controller: _passwordCtrl,
                       obscureText: !_passwordVisible,
                       enabled: !_cargando,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                      ],
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         hintText: 'Mínimo 10 caracteres y un símbolo',
@@ -274,9 +275,11 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
     bool obligatorio = false,
     bool esEmail = false,
     TextInputType teclado = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final emailPattern = RegExp(
-      r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+      r'^[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}_\-]+(\.[\p{L}\p{N}_\-]+)*\.[\p{L}]{2,}$',
+      unicode: true,
     );
 
     return Padding(
@@ -285,6 +288,7 @@ class _RegistroOrganizadorPageState extends State<RegistroOrganizadorPage> {
         controller: controller,
         keyboardType: teclado,
         enabled: !_cargando,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,

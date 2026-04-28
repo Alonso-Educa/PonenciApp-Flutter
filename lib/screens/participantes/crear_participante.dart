@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/custom_scaffold.dart';
 
 // ─────────────────────────────────────────────
 // CREAR PARTICIPANTE
-// El organizador puede registrar manualmente a
-// un participante. Se crea la cuenta en Firebase
-// Auth y se guarda el documento en Firestore con
-// rol "participante", asignado al evento del
-// organizador si lo tiene.
+// El organizador puede registrar manualmente a un participante.
+// Se crea la cuenta en Firebase Auth y se guarda el documento en Firestore con rol "participante",
+// asignado al evento del organizador si lo tiene.
 // ─────────────────────────────────────────────
 
 class CrearParticipante extends StatefulWidget {
@@ -106,7 +105,7 @@ class _CrearParticipanteState extends State<CrearParticipante> {
             'rol': 'participante',
             'fechaRegistro': _formatearFechaHora(DateTime.now()),
             'idEvento': '',
-            'fotoPerfilUrl': ''
+            'fotoPerfilUrl': '',
           });
 
       // Paso 3: cerrar la sesión del participante recién creado
@@ -192,6 +191,9 @@ class _CrearParticipanteState extends State<CrearParticipante> {
                     obligatorio: true,
                     teclado: TextInputType.emailAddress,
                     esEmail: true,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                    ],
                   ),
                   _campo(
                     controller: _centroCtrl,
@@ -324,9 +326,11 @@ class _CrearParticipanteState extends State<CrearParticipante> {
     bool obligatorio = false,
     bool esEmail = false,
     TextInputType teclado = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final emailPattern = RegExp(
-      r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+      r'^[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}_\-]+(\.[\p{L}\p{N}_\-]+)*\.[\p{L}]{2,}$',
+      unicode: true,
     );
 
     return Padding(
@@ -335,6 +339,7 @@ class _CrearParticipanteState extends State<CrearParticipante> {
         controller: controller,
         keyboardType: teclado,
         enabled: !_cargando,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
