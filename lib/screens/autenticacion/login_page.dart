@@ -163,7 +163,9 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 // ── Logo y título ───────────────────────────────
                 Image.asset(
-                  isDark ? 'assets/img/logotemaoscuro.png' : 'assets/img/logotemaclaro.png',
+                  isDark
+                      ? 'assets/img/logotemaoscuro.png'
+                      : 'assets/img/logotemaclaro.png',
                   height: 120,
                 ),
                 const SizedBox(height: 16),
@@ -223,6 +225,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     filled: true,
                     fillColor: theme.colorScheme.surface,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '¿Has olvidado tu contraseña?',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
