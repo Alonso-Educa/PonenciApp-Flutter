@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../providers/app_state.dart';
@@ -26,7 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _cargando = false;
 
   final _emailPattern = RegExp(
-    r'^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    r'^[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}_\-]+(\.[\p{L}\p{N}_\-]+)*\.[\p{L}]{2,}$',
+    unicode: true,
   );
 
   @override
@@ -190,6 +192,9 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   enabled: !_cargando,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   decoration: InputDecoration(
                     labelText: 'Email educativo',
                     hintText: 'usuario@educa.ejemplo.es',
@@ -208,6 +213,9 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordCtrl,
                   obscureText: !_passwordVisible,
                   enabled: !_cargando,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
                     prefixIcon: const Icon(Icons.lock_outlined),

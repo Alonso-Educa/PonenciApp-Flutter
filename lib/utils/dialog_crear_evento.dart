@@ -130,7 +130,7 @@ class _DialogCrearEventoState extends State<DialogCrearEvento> {
 
   String _generarCodigo() {
     const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     final rand = Random();
     final code = List.generate(
       4,
